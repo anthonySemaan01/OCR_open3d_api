@@ -1,0 +1,4 @@
+fastapi==0.85.0
+open3d==0.15.2
+dependency-injector==4.40.0
+
