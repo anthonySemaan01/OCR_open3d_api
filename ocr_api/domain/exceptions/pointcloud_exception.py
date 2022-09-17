@@ -15,6 +15,6 @@ class VoxelDownSampleException(ApplicationError):
     raised when the DownSampling incurred an error
     """
 
-    def __int__(self, additional_message: str):
-        super().__init__("DownSampling is not valid", additional_message)
+    def __init__(self, additional_message: str):
+        super().__init__(default_message="DownSampling is not valid", additional_message=additional_message)
 
