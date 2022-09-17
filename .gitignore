@@ -1,1 +1,2 @@
-ocr_api/datasets/*
+ocr_api/datasets/down-sampled/
+ocr_api/datasets/point-clouds/
