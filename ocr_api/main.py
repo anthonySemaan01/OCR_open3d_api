@@ -1,11 +1,16 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from starlette.middleware.cors import CORSMiddleware
 from api.controllers import health_check_controller, point_cloud_controller
 import sys
+from ocr_api.persistence.sqlite_db import point_cloud_model
+from ocr_api.persistence.sqlite_db.database import engine, SessionLocal
 
 app = FastAPI(version='1.0', title='OCR Open-3d player',
               description="API for reducing the number of cloud points")
+
+point_cloud_model.Base.metadata.create_all(bind=engine)
+
 
 app.add_middleware(CORSMiddleware,
                    allow_origins=["*"],
