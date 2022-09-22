@@ -31,10 +31,12 @@ async def reduce_points(point_cloud_file: UploadFile, ratio: float = 0.5, db: Se
     try:
         path_to_file = save_file(upload_file=point_cloud_file, destination=str(FileStructure.POINT_CLOUD_PATH.value))
         datas = voxel_downsampling_service.voxel_down_sampling(path=path_to_file, scale=ratio)
-        db_point_cloud = crud_db.create_point_cloud(db=db, point_count=datas["input"]["size"],
-                                                    path=datas["input"]["path"])
-        db_point_cloud = crud_db.create_point_cloud(db=db, point_count=datas["output"]["size"],
-                                                    path=datas["output"]["path"])
+        if crud_db.get_point_cloud_by_path(db=db, path=datas["input"]["path"]) is None:
+            db_point_cloud = crud_db.create_point_cloud(db=db, point_count=datas["input"]["size"][0] * datas["input"]["size"][1],
+                                                        path=datas["input"]["path"])
+        if crud_db.get_point_cloud_by_path(db=db, path=datas["output"]["path"]) is None:
+            db_point_cloud = crud_db.create_point_cloud(db=db, point_count=datas["output"]["size"][0] * datas["output"]["size"][1],
+                                                        path=datas["output"]["path"])
         return ApiResponse(
             success=True, data=datas
         )
@@ -80,10 +82,9 @@ async def get_point_clouds(db: Session = Depends(get_db)):
         if point_clouds is None:
             return HTTPException(status_code=400, detail="there is no point_clouds")
         return point_clouds
+
     except DBException as e:
         return ApiResponse(success=False, error=e.__str__())
 
     except Exception as e:
         return ApiResponse(success=False, error=e.__str__())
-
-

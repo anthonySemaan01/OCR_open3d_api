@@ -7,4 +7,4 @@ class PointCloud(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     points_count = Column(Integer, primary_key=False, index=True)
-    path = Column(String, unique=False, index=True)
+    path = Column(String, unique=True, index=True)

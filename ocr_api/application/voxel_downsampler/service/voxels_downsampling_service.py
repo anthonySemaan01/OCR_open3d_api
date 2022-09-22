@@ -18,10 +18,11 @@ class VoxelsDownSamplingService(AbstractVoxelDownSampling):
         try:
             down_ply = ply.voxel_down_sample(voxel_size=scale)
             output_path = FileStructure.DOWN_SAMPLED_PATH.value + "\\{}-{}".format(path.rpartition('\\')[2],
-                                                                                              "downSampled.ply")
+                                                                                   "downSampled.ply")
             o3d.io.write_point_cloud(output_path, down_ply)
-            out1 = str(np.shape(ply.points))
-            out2 = str(np.shape(down_ply.points))
+            out1 = np.shape(ply.points)
+            out2 = np.shape(down_ply.points)
+
             return {
                 "input": {
                     "size": out1,
@@ -32,7 +33,6 @@ class VoxelsDownSamplingService(AbstractVoxelDownSampling):
                     "path": output_path
                 }
             }
-
 
         except Exception as e:
             raise VoxelDownSampleException(

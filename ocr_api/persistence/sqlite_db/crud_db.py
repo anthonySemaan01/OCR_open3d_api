@@ -7,6 +7,10 @@ from ocr_api.persistence.repositories.api_response import ApiResponse
 from ocr_api.domain.exceptions.db_exception import DBException
 
 
+def get_point_cloud_by_path(db: Session, path: str):
+    return db.query(point_cloud_model.PointCloud).filter(point_cloud_model.PointCloud.path == path).first()
+
+
 def get_point_clouds(db: Session, skip: int = 0, limit: int = 100) -> list:
     try:
         return db.query(point_cloud_model.PointCloud).offset(skip).limit(limit).all()
