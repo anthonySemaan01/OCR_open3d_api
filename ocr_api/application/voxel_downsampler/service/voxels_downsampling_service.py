@@ -12,16 +12,24 @@ import numpy as np
 
 
 class VoxelsDownSamplingService(AbstractVoxelDownSampling):
-    def voxel_down_sampling(self, path: str, scale: float = 0.5):
+    # If it uses another service, then we need to create a constructor __init__ and feed services or what is needed
+
+    def voxel_down_sampling(self, path: str, scale: float = 0.5) # Always add return type -> type:
         ply = read_ply_file(path)
 
         try:
             down_ply = ply.voxel_down_sample(voxel_size=scale)
             output_path = FileStructure.DOWN_SAMPLED_PATH.value + "\\{}-{}".format(path.rpartition('\\')[2],
                                                                                    "downSampled.ply")
+                                                                                   # Use os.path.join
             o3d.io.write_point_cloud(output_path, down_ply)
-            out1 = np.shape(ply.points)
+            out1 = np.shape(ply.points) # Add variable type out1: int = ...
             out2 = np.shape(down_ply.points)
+
+            # Use models instead of json
+            #class PCInformation(pydantic):
+            #    input: Dict[str,str]
+            #    output: Dict[str,str]
 
             return {
                 "input": {

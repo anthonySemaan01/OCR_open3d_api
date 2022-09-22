@@ -11,7 +11,7 @@ def get_point_cloud_by_path(db: Session, path: str):
     return db.query(point_cloud_model.PointCloud).filter(point_cloud_model.PointCloud.path == path).first()
 
 
-def get_point_clouds(db: Session, skip: int = 0, limit: int = 100) -> list:
+def get_point_clouds(db: Session, skip: int = 0, limit: int = 100) -> list: # Always set return type and use from typing import List, Dict, Optional so you can specify for example List[int] or List[PointCloud]
     try:
         return db.query(point_cloud_model.PointCloud).offset(skip).limit(limit).all()
     except Exception as e:
@@ -19,7 +19,7 @@ def get_point_clouds(db: Session, skip: int = 0, limit: int = 100) -> list:
 
 
 def create_point_cloud(db: Session, point_count: int, path: str) -> \
-        ocr_api.persistence.sqlite_db.point_cloud_model.PointCloud:
+        ocr_api.persistence.sqlite_db.point_cloud_model.PointCloud: # Just import it and only use PointCloud
     point_cloud = point_cloud_model.PointCloud(points_count=point_count, path=path)
     try:
         db.add(point_cloud)

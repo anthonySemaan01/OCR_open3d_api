@@ -11,14 +11,14 @@ import numpy as np
 from sqlalchemy.orm import Session
 from ocr_api.shared.helper import read_files
 from ocr_api.domain.exceptions.db_exception import DBException
-
+# from dependency_injector.wiring import inject, Provide
 router = APIRouter()
 
 voxel_downsampling_service = Services.voxels_downsampling_service()
 
 
 # dependency
-def get_db():
+def get_db(): # Move to persistence
     db = SessionLocal()
     try:
         yield db
@@ -26,7 +26,7 @@ def get_db():
         db.close()
 
 
-@router.post('/DownSampling')
+@router.post('/DownSampling') # Lower case _ between words (Ex: /reduce_pc) # @Inject for dependency injection
 async def reduce_points(point_cloud_file: UploadFile, ratio: float = 0.5, db: Session = Depends(get_db)):
     try:
         path_to_file = save_file(upload_file=point_cloud_file, destination=str(FileStructure.POINT_CLOUD_PATH.value))
@@ -37,6 +37,8 @@ async def reduce_points(point_cloud_file: UploadFile, ratio: float = 0.5, db: Se
         if crud_db.get_point_cloud_by_path(db=db, path=datas["output"]["path"]) is None:
             db_point_cloud = crud_db.create_point_cloud(db=db, point_count=datas["output"]["size"][0] * datas["output"]["size"][1],
                                                         path=datas["output"]["path"])
+
+        # data = service.reduce_points(params ...)
         return ApiResponse(
             success=True, data=datas
         )
@@ -62,7 +64,7 @@ async def create_point_cloud(point_cloud_file: UploadFile = File(...), db: Sessi
         ply = read_files.read_ply_file(path_to_file)
         point_count = np.shape(ply.points)[0] * np.shape(ply.points)[1]
         db_point_cloud = crud_db.create_point_cloud(db=db, point_count=point_count, path=path_to_file)
-
+        # db_point_cloud = service.reduce_points(params ...)
     except FilesException as e:
         return ApiResponse(success=False, error=e.__str__())
 
